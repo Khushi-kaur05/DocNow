@@ -1,3 +1,10 @@
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { registerSchema, loginSchema } = require("../validators/authValidator");
+const { generateAccessToken, generateRefreshToken} = require("../utils/generateTokens");
+
+
 // Logout user
 exports.logout = async (req, res) => {
   try {
@@ -25,15 +32,6 @@ exports.logout = async (req, res) => {
     });
   }
 };
-
-
-//Logic of auth.js route
-
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { registerSchema, loginSchema } = require("../validators/authValidator");
-const { generateAccessToken, generateRefreshToken} = require("../utils/generateTokens");
 
 // Handle refresh token
 exports.refreshTokenHandler = async (req, res) => {
@@ -99,7 +97,9 @@ exports.register = async (req, res) => {
       phone
     });
 
-    res.status(201).json({ message: "User registered successfully", user });
+    const { password: _, ...safeUser } = user.toObject();
+
+    res.status(201).json({ message: "User registered successfully", safeUser });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
