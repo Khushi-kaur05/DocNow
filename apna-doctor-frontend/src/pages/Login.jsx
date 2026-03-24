@@ -1,19 +1,26 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const {login} = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const data = await loginUser({ email, password });
-      localStorage.setItem("token", data.accessToken || data.token);
+      login(data);
       setMessage("Login successful!");
+       if (data.user.role === "doctor") {
+      navigate("/doctor-dashboard");
+    } else {
+      navigate("/patient-dashboard");
+    }
     } catch (error) {
       setMessage(error.response?.data?.message || "Login failed!");
     }
