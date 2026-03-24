@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../services/authService";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name:"",
+    name: "",
     email: "",
     password: "",
     role: "",
-    phone:""
+    phone: ""
   });
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,21 +21,25 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Call signup API
-    const data = await registerUser(formData);
-    console.log("Reponse of the register call is ", data);
+    setLoading(true);
+    setMessage("");
 
-    // Assuming data contains a property 'ok' to indicate success
-    if (data.ok) {
-      if (formData.role === "doctor") {
-        // Redirect doctor to doctor profile page
-        navigate(`/doctor-profile/${data.userId}`);
-      } else {
-        // Redirect patient to homepage
-        navigate("/homepage");
+    try {
+      const data = await registerUser(formData);
+
+      // ✅ Backend returns { message, user } — check for user object
+      if (data.user) {
+        if (formData.role === "doctor") {
+          navigate("/doctor-dashboard");
+        } else {
+          navigate("/patient-dashboard");
+        }
       }
-    } else {
-      alert(data.message);
+    } catch (error) {
+      // ✅ Properly catch axios errors
+      setMessage(error.response?.data?.message || "Registration failed!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,7 +49,7 @@ const Signup = () => {
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="string"
+            type="text"
             name="name"
             placeholder="Name"
             value={formData.name}
@@ -91,11 +97,23 @@ const Signup = () => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
           >
-            Sign Up
+            {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
+
+        {message && (
+          <p className="mt-3 text-center text-red-500 text-sm">{message}</p>
+        )}
+
+        <p className="mt-4 text-center text-sm">
+          Already have an account?{" "}
+          <Link to="/" className="text-blue-500 underline">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
