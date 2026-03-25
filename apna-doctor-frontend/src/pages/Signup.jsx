@@ -27,8 +27,7 @@ const Signup = () => {
     try {
       const data = await registerUser(formData);
 
-      // ✅ Backend returns { message, user } — check for user object
-      if (data.user) {
+      if (data.safeUser) {
         if (formData.role === "doctor") {
           navigate("/doctor-dashboard");
         } else {
@@ -36,7 +35,6 @@ const Signup = () => {
         }
       }
     } catch (error) {
-      // ✅ Properly catch axios errors
       setMessage(error.response?.data?.message || "Registration failed!");
     } finally {
       setLoading(false);
