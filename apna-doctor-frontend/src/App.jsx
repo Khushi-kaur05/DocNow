@@ -5,6 +5,8 @@ import Welcome from "./pages/Welcome";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import CompleteDoctorProfile from "./pages/CompleteDoctorProfile";
+import FindDoctor from "./pages/FindDoctor";
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/complete-doctor-profile" element={ <ProtectedRoute allowedRoles={["doctor"]}>
+          <CompleteDoctorProfile />
+          </ProtectedRoute>} />
 
         {/* Patient only */}
         <Route
@@ -33,6 +38,12 @@ function App() {
               <PatientDashboard />
             </ProtectedRoute>
           }
+        />
+        <Route path="/find-doctor" element={
+          <ProtectedRoute allowedRoles={["patient"]}>
+            <FindDoctor/>
+          </ProtectedRoute>
+        }
         />
       </Routes>
     </BrowserRouter>

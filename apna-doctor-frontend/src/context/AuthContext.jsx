@@ -18,9 +18,12 @@ export const AuthProvider = ({ children }) => {
     const userData = {
       token: data.accessToken || data.token,
       role: data.user.role,
+      username: data.user.name
     };
     setUser(userData);
+    console.log("Setting user data in Auth Context=====", userData);
     localStorage.setItem("user", JSON.stringify(userData));
+    console.log("usr data in local storage stored successfully=========")
   };
 
   const logout = () => {

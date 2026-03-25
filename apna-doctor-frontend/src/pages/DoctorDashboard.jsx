@@ -1,28 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../components/DashboardLayout";
+import DashboardCard from "../components/DashboardCard";
+import { useAuth } from "../context/AuthContext"; 
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
+  const {user} = useAuth();
+
 
   return (
     <DashboardLayout>
+        <h1 className="text-xl font-bold text-center text-blue-900 mb-5">WELCOME, Dr. {user?.username}! Patients have been waiting for you since a while!</h1>
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Doctor Dashboard</h1>
-      <div className="flex gap-5">
-        <div
-          className="cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all w-48 text-center"
-          onClick={() => navigate("/add-slots")}
-        >
-          <div className="text-3xl mb-2">🗓️</div>
-          <p className="text-sm font-medium text-gray-700">Add Time Slots</p>
-        </div>
+      <div className="flex gap-5 flex-wrap">
+        <DashboardCard title = "View Appointments" icon="📅" route="/my-appointments"/>
+        <DashboardCard title = "My Patients" icon="👥" route="/my-patients"/>
+        <DashboardCard title = "Manage Availability" icon="🕒" route="/manage-availability"/>
+        <DashboardCard title = "Manage Appointments" icon="📋" route="/manage-appointments"/>
 
-        <div
-          className="cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all w-48 text-center"
-          onClick={() => navigate("/requests")}
-        >
-          <div className="text-3xl mb-2">📋</div>
-          <p className="text-sm font-medium text-gray-700">View Requests</p>
-        </div>
       </div>
     </DashboardLayout>
   );

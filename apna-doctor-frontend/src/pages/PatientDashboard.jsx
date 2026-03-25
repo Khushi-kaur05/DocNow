@@ -1,28 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../components/DashboardLayout";
+import { useAuth } from "../context/AuthContext";
+import DashboardCard from "../components/DashboardCard";
+
+
 
 export default function PatientDashboard() {
   const navigate = useNavigate();
+  const {user} = useAuth();
+  console.log("User in Patient =========", user);
 
   return (
     <DashboardLayout>
+        
+        <h1 className="text-xl font-bold text-center text-blue-900 mb-5">WELCOME,  {user?.username}! How can we help you today?</h1>
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Patient Dashboard</h1>
-      <div className="flex gap-5">
-        <div
-          className="cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-green-300 transition-all w-48 text-center"
-          onClick={() => navigate("/find-doctor")}
-        >
-          <div className="text-3xl mb-2">🔍</div>
-          <p className="text-sm font-medium text-gray-700">Find Doctor</p>
-        </div>
-
-        <div
-          className="cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-green-300 transition-all w-48 text-center"
-          onClick={() => navigate("/my-appointments")}
-        >
-          <div className="text-3xl mb-2">📅</div>
-          <p className="text-sm font-medium text-gray-700">My Appointments</p>
-        </div>
+      <div className="flex gap-5 flex-wrap">
+        <DashboardCard title = "Find Doctor" icon="🔍" route="/find-doctor"/>
+        <DashboardCard title = "Call a Doctor" icon="📞" route="/call-a-doctor"/>
+        <DashboardCard title = "Visit a Doctor" icon="🩺" route="/visit-a-doctor"/>
+        <DashboardCard title = "My Appointments" icon="📅" route="/my-appointments"/>
       </div>
     </DashboardLayout>
   );

@@ -77,16 +77,19 @@ exports.register = async (req, res) => {
  
     
     const { name, email, password, role, phone } = req.body;
+    console.log("Body inside authController/register=====", req.body);
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log("User already exists===============");
       return res.status(400).json({ message: "User already exists" });
     }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    console.log("Password hashing done=========");
 
     // Create user
     const user = await User.create({
@@ -96,9 +99,9 @@ exports.register = async (req, res) => {
       role,
       phone
     });
-
+    
     const { password: _, ...safeUser } = user.toObject();
-
+    console.log("User created successfully========================")
     res.status(201).json({ message: "User registered successfully", safeUser });
   } catch (err) {
     console.log(err);
@@ -140,7 +143,8 @@ exports.login = async (req, res) => {
         user: {
           id: user._id,
           email: user.email,
-          role: user.role
+          role: user.role,
+          name: user.name 
         }
       });
   } catch (err) {

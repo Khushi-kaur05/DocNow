@@ -5,7 +5,8 @@ const {
   createDoctorProfile,
   getAllDoctors,
   getDoctorById,
-  setDoctorAvailability
+  setDoctorAvailability,
+  getMyDoctorProfile
 } = require("../controllers/doctorController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -19,7 +20,11 @@ router.post("/create-profile", authMiddleware,roleMiddleware(["doctor"]), create
 // Get all doctors
 router.get("/", getAllDoctors);
 
-
+router.get("/my-profile",
+  authMiddleware,
+  roleMiddleware(["doctor"]),
+  getMyDoctorProfile 
+)
 // Get doctor by id
 router.get("/:id", getDoctorById);
 
@@ -29,6 +34,7 @@ router.post(
   roleMiddleware(["doctor"]),
   setDoctorAvailability
 );
+
 
 
 module.exports = router;

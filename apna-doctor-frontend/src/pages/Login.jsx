@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { getMyDoctorProfile } from "../services/doctorService";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,18 +14,33 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const data = await loginUser({ email, password });
-      login(data);
-      setMessage("Login successful!");
-       if (data.user.role === "doctor") {
-      navigate("/doctor-dashboard");
-    } else {
-      navigate("/patient-dashboard");
-    }
+        const data = await loginUser({ email, password });
+
+        login(data);
+        setMessage("Login successful!");
+
+  // 🔥 separate try block
+      if (data.user.role === "doctor") {
+        try {
+          const profileRes = await getMyDoctorProfile();
+
+          if (!profileRes) {
+            navigate("/complete-doctor-profile");
+          } else {
+            navigate("/doctor-dashboard");
+          }
+        } catch (err) {
+          // if profile API fails, still allow flow
+          navigate("/complete-doctor-profile");
+        }
+      } else {
+        navigate("/patient-dashboard");
+      }
+
     } catch (error) {
       setMessage(error.response?.data?.message || "Login failed!");
     }
-  };
+  }
 
   return (
     <div className="max-w-md mx-auto mt-20 p-5 border rounded shadow">

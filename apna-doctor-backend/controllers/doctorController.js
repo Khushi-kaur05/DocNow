@@ -2,6 +2,11 @@ const DoctorProfile = require("../models/DoctorProfile");
 
 const createDoctorProfile = async (req, res, next) => {
   try {
+    const existing = await DoctorProfile.findOne({ userId: req.user.id });
+
+    if (existing) {
+      return res.status(400).json({ message: "Profile already exists" });
+    }
     const doctor = await DoctorProfile.create({
       userId: req.user.id,
       specialization: req.body.specialization,
@@ -27,8 +32,12 @@ const getAllDoctors = async (req, res, next) => {
     const skip = (page - 1) * limit;
     const specialization = req.query.specialization;
     let filter = {};
-    if (specialization) {
-      filter.specialization = specialization;
+    console.log("searching for specialization=============", specialization);
+    if (specialization && specialization.trim() !== "") {
+      filter.specialization = {
+        $regex: specialization.trim(),
+        $options: "i"
+      };
     }
     const doctors = await DoctorProfile.find(filter)
       .populate("userId", "name email phone")
@@ -80,9 +89,22 @@ const setDoctorAvailability = async (req, res, next) => {
   }
 };
 
+const getMyDoctorProfile = async (req, res, next) => {
+  try {
+    const profile = await DoctorProfile.findOne({
+      userId: req.user.id
+    });
+
+    res.json(profile); // null if not exists
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createDoctorProfile,
   getAllDoctors,
   getDoctorById,
-  setDoctorAvailability
+  setDoctorAvailability,
+  getMyDoctorProfile
 };
