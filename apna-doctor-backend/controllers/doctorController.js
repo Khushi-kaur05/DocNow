@@ -32,8 +32,12 @@ const getAllDoctors = async (req, res, next) => {
     const skip = (page - 1) * limit;
     const specialization = req.query.specialization;
     let filter = {};
-    if (specialization) {
-      filter.specialization = specialization;
+    console.log("searching for specialization=============", specialization);
+    if (specialization && specialization.trim() !== "") {
+      filter.specialization = {
+        $regex: specialization.trim(),
+        $options: "i"
+      };
     }
     const doctors = await DoctorProfile.find(filter)
       .populate("userId", "name email phone")

@@ -6,6 +6,7 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import CompleteDoctorProfile from "./pages/CompleteDoctorProfile";
+import FindDoctor from "./pages/FindDoctor";
 
 function App() {
   return (
@@ -37,6 +38,12 @@ function App() {
               <PatientDashboard />
             </ProtectedRoute>
           }
+        />
+        <Route path="/find-doctor" element={
+          <ProtectedRoute allowedRoles={["patient"]}>
+            <FindDoctor/>
+          </ProtectedRoute>
+        }
         />
       </Routes>
     </BrowserRouter>

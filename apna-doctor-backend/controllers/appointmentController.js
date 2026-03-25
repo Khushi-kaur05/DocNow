@@ -2,26 +2,6 @@ const Appointment = require("../models/Appointment");
 const DoctorProfile = require ("../models/DoctorProfile");
 const { appointmentSchema } = require("../validators/appointValidator");
 
-// const bookAppointment = async (req, res) => {
-//   try {
-
-//     const appointment = await Appointment.create({
-//       patientId: req.user.id,
-//       doctorId: req.body.doctorId,
-//       date: req.body.date,
-//       time: req.body.time
-//     });
-
-//     res.status(201).json({
-//       message: "Appointment booked successfully",
-//       appointment
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
 
 const bookAppointment = async (req, res) => {
     const { error } = appointmentSchema.validate(req.body);
@@ -46,8 +26,8 @@ const bookAppointment = async (req, res) => {
     }
 
     //  check if slot exists in doctor availability
-    const slotExists = doctor.availableSlots.some(
-      slot => slot.startTime === time
+    const slotExists = doctor.availableTimeSlots.some(
+      slot => `${slot.startTime} - ${slot.endTime}` === time
     );
 
     if (!slotExists) {
@@ -73,6 +53,7 @@ const bookAppointment = async (req, res) => {
     const appointment = await Appointment.create({
       patientId: req.user.id,
       doctorId,
+      doctorProfileId: doctor._id,
       date,
       time
     });
