@@ -15,7 +15,7 @@ const roleMiddleware = require ("../middleware/roleMiddleware");
 
 
 // Book appointment
-router.post("/book", bookAppointment);
+router.post("/book", authMiddleware, bookAppointment);
 
 
 // Get doctor appointments
