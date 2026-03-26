@@ -11,7 +11,7 @@ API.interceptors.request.use((req) => {
   const stored = localStorage.getItem("user");
   if (stored) {
     const parsed = JSON.parse(stored);
-    if (parsed.token) req.headers.Authorization = `Bearer ${parsed.token}`;
+    if (parsed.token) req.headers.Authorization = `Bearer ${parsed.token || parsed.accessToken}`;
   }
   return req;
 });

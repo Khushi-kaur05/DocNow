@@ -15,10 +15,8 @@ export default function PatientDashboard() {
         
         <h1 className="text-xl font-bold text-center text-blue-900 mb-5">WELCOME,  {user?.username}! How can we help you today?</h1>
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Patient Dashboard</h1>
-      <div className="flex gap-5 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
         <DashboardCard title = "Find Doctor" icon="🔍" route="/find-doctor"/>
-        <DashboardCard title = "Call a Doctor" icon="📞" route="/call-a-doctor"/>
-        <DashboardCard title = "Visit a Doctor" icon="🩺" route="/visit-a-doctor"/>
         <DashboardCard title = "My Appointments" icon="📅" route="/my-appointments"/>
       </div>
     </DashboardLayout>

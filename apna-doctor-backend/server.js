@@ -8,6 +8,7 @@ const testRoute = require("./routes/test");
 const authRoute = require("./routes/auth");
 const doctorRoute = require("./routes/doctor");
 const appointmentRoute = require("./routes/appointment");
+const doctorAvailabilityRoutes = require( "./routes/doctorAvailability.js");
 const errorHandler = require ("./middleware/errorHandlerMiddleware");
 
 mongoose.connect(process.env.MONGO_URI)
@@ -27,6 +28,8 @@ app.use("/api/auth", authRoute);  //Login/register route
 app.use("/api/doctors", doctorRoute);   //doctor route
 
 app.use("/api/appointments", appointmentRoute);  //Appointments route
+
+app.use("/api/doctor/availability", doctorAvailabilityRoutes);
 
 app.use(errorHandler);
 

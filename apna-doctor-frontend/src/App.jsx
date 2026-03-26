@@ -7,6 +7,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import CompleteDoctorProfile from "./pages/CompleteDoctorProfile";
 import FindDoctor from "./pages/FindDoctor";
+import ManageAvailability from "./pages/ManageAvailability";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           </ProtectedRoute>
         }
         />
+        <Route path="/manage-availability" element={<ManageAvailability/>}/>
       </Routes>
     </BrowserRouter>
   );
