@@ -3,6 +3,7 @@ import { getAllDoctors } from "../services/doctorService";
 import { bookAppointment } from "../services/appointmentService";
 import DashboardLayout from "../components/DashboardLayout";
 import DoctorCard from "../components/DoctorCard";
+import { getAvailability, getDoctorAvailability } from "../services/availabilityServices";
 
 export default function FindDoctor() {
   const [doctors, setDoctors] = useState([]);
@@ -11,19 +12,63 @@ export default function FindDoctor() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const timeSlots = [
-  "10:00 - 11:00",
-  "11:00 - 12:00",
-  "12:00 - 13:00",
-  "14:00 - 15:00",
-  "15:00 - 16:00",
-  "16:00 - 17:00",
-  "17:00 - 18:00",
-  "18:00 - 19:00",
-  "19:00 - 20:00",
-];
+  const [availability, setAvailability] = useState(null);
+  const [mode, setMode] = useState("");
+  
+  const isDayAvailable = (selectedDate) => {
+  if (!availability) return false;
 
-  // 🔥 Debounce logic
+  const day = new Date(selectedDate)
+    .toLocaleString("en-US", { weekday: "short" });
+
+  return availability.days?.includes(day);
+};
+  const generateSlots = () => {
+  if (!availability) return [];
+
+  const start = parseInt(availability.startTime);
+  const end = parseInt(availability.endTime);
+
+  let slots = [];
+
+  for (let i = start; i < end; i++) {
+    const formatted =
+      i > 12 ? `${i - 12}:00 PM` :
+      i === 12 ? "12:00 PM" :
+      `${i}:00 AM`;
+
+    slots.push({label:
+    i > 12 ? `${i - 12}:00 PM` :
+    i === 12 ? "12:00 PM" :
+    `${i}:00 AM`,
+    value: i // 🔥 IMPORTANT});
+  });
+}
+
+  return slots;
+};
+  
+
+  useEffect(() => {
+  const fetchAvailability = async () => {
+    if (!selectedDoctor) return;
+
+    try {
+      const data = await getDoctorAvailability(
+        selectedDoctor.userId._id
+      );
+
+      console.log("AVAILABILITY:", data);
+
+      setAvailability(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  fetchAvailability();
+}, [selectedDoctor]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(specialization);
@@ -32,7 +77,6 @@ export default function FindDoctor() {
     return () => clearTimeout(timer);
   }, [specialization]);
 
-  // 🔥 Fetch doctors when debounced value changes
   useEffect(() => {
     fetchDoctors();
   }, [debouncedSearch]);
@@ -100,7 +144,7 @@ export default function FindDoctor() {
               <DoctorCard
                 key={doc._id}
                 doctor={doc}
-                onBook={setSelectedDoctor}
+                onBook={(doc) => setSelectedDoctor(doc)}
               />
             ))}
           </div>
@@ -115,25 +159,49 @@ export default function FindDoctor() {
               </h2>
 
               <input
-                type="date"
-                className="border p-2 mb-3 w-full"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
+                  type="date"
+                  className="border p-2 mb-3 w-full"
+                  value={date}
+                  onChange={(e) => {
+                    const selected = e.target.value;
+
+                    if (!isDayAvailable(selected)) {
+                      alert("Doctor not available on this day");
+                      return;
+                    }
+
+                    setDate(selected);
+                  }}
+                />
               <select
                 className="border p-2 mb-3 w-full"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 >
                 <option value="">Select Time Slot</option>
-                {timeSlots.map((slot, index) => (
-                    <option key={index} value={slot}>
-                    {slot}
+                {generateSlots().map((slot, index) => (
+                    <option key={index} value={slot.value}>
+                    {slot.label}
                     </option>
                 ))}
                 </select>
 
-              
+              <div className="flex gap-2 mb-3">
+                {availability?.mode?.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setMode(m)}
+                    className={`px-3 py-1 border rounded ${
+                      mode === m ? "bg-blue-500 text-white" : ""
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <p className="mb-2">
+                Fee: ₹{selectedDoctor?.consultationFee}
+              </p>
 
               <button
                 onClick={handleBook}

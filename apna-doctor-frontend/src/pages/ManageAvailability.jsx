@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import { saveAvailability } from "../services/availabilityServices";
+import { saveAvailability, getAvailability} from "../services/availabilityServices";
 const daysList = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const ManageAvailability = () => {
@@ -11,6 +11,30 @@ const ManageAvailability = () => {
   const [isEmergencyAvailable, setIsEmergencyAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+ useEffect(() => {
+  const fetchAvailability = async () => {
+    try {
+      console.log("Fetching availability...");
+
+      const data = await getAvailability();
+
+      console.log("API DATA:", data);
+
+      if (!data) return;
+
+      setSelectedDays(data.days || []);
+      setStartTime(data.startTime || "");
+      setEndTime(data.endTime || "");
+      setMode(data.mode || []);
+      setIsEmergencyAvailable(data.isEmergencyAvailable || false);
+
+    } catch (err) {
+      console.log("ERROR:", err);
+    }
+  };
+
+  fetchAvailability();
+}, []);
   const saveAvailabilityChange = async () => {
   try {
     const response = await saveAvailability({

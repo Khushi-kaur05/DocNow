@@ -1,5 +1,5 @@
 const express = require("express");
-const { saveAvailability, getAvailability } = require("../controllers/doctorAvailabilityController.js");
+const { saveAvailability, getAvailability, getDoctorAvailabilityById } = require("../controllers/doctorAvailabilityController.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
@@ -8,6 +8,9 @@ const router = express.Router();
 router.post("/save", authMiddleware, saveAvailability);
 
 // Get availability of logged-in doctor
-router.get("/get", authMiddleware, getAvailability);
+router.get("/get-availability", authMiddleware, getAvailability);
+
+router.get("/get-availability/:doctorId", authMiddleware, getDoctorAvailabilityById);
+
 
 module.exports = router;
