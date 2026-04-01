@@ -1,22 +1,39 @@
 const Appointment = require("../models/Appointment");
-const DoctorProfile = require ("../models/DoctorProfile");
+const DoctorProfile = require("../models/DoctorProfile");
+const DoctorAvailability = require("../models/DoctorAvailability");
 const { appointmentSchema } = require("../validators/appointValidator");
 
+// 🔥 Convert "5:00 PM" → 17
+const convertToNumber = (timeStr) => {
+  const [time, modifier] = timeStr.split(" ");
+  let [hours] = time.split(":");
+
+  hours = parseInt(hours);
+
+  if (modifier === "PM" && hours !== 12) {
+    hours += 12;
+  }
+
+  if (modifier === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return hours;
+};
 
 const bookAppointment = async (req, res) => {
-    const { error } = appointmentSchema.validate(req.body);
+  const { error } = appointmentSchema.validate(req.body);
 
-    if (error) {
+  if (error) {
     return res.status(400).json({
-        message: error.details[0].message
+      message: error.details[0].message
     });
-    }
+  }
 
   try {
-
     const { doctorId, date, time } = req.body;
 
-    //check if doctor exists
+    // ✅ Check if doctor exists
     const doctor = await DoctorProfile.findOne({ userId: doctorId });
 
     if (!doctor) {
@@ -25,18 +42,29 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    //  check if slot exists in doctor availability
-    const slotExists = doctor.availableTimeSlots.some(
-      slot => `${slot.startTime} - ${slot.endTime}` === time
-    );
+    // ✅ Get doctor's availability (SINGLE SOURCE OF TRUTH)
+    const availability = await DoctorAvailability.findOne({ doctorId });
 
-    if (!slotExists) {
+    if (!availability) {
       return res.status(400).json({
-        message: "Doctor not available at this time"
+        message: "Doctor availability not set"
       });
     }
 
-    //  check if slot already booked
+    // ✅ Convert time to number
+    const timeNumber = convertToNumber(time);
+
+    const start = Number(availability.startTime);
+    const end = Number(availability.endTime);
+
+    // ✅ Check if time is within range
+    if (timeNumber < start || timeNumber >= end) {
+      return res.status(400).json({
+        message: "Doctor not available at this time slot"
+      });
+    }
+
+    // ✅ Check if slot already booked
     const existingAppointment = await Appointment.findOne({
       doctorId,
       date,
@@ -49,7 +77,7 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    // create appointment
+    // ✅ Create appointment
     const appointment = await Appointment.create({
       patientId: req.user.id,
       doctorId,
@@ -64,17 +92,15 @@ const bookAppointment = async (req, res) => {
     });
 
   } catch (error) {
-
     res.status(500).json({
       message: error.message
     });
-
   }
-
 };
+
+// ✅ Get all appointments for a doctor
 const getDoctorAppointments = async (req, res) => {
   try {
-
     const appointments = await Appointment
       .find({ doctorId: req.params.doctorId })
       .populate("patientId");
@@ -86,10 +112,9 @@ const getDoctorAppointments = async (req, res) => {
   }
 };
 
-
+// ✅ Get logged-in patient appointments
 const getPatientAppointments = async (req, res) => {
   try {
-
     const appointments = await Appointment
       .find({ patientId: req.user.id })
       .populate("doctorId");
@@ -100,9 +125,10 @@ const getPatientAppointments = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// ✅ Approve appointment
 const approveAppointment = async (req, res) => {
   try {
-
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
       { status: "approved" },
@@ -119,10 +145,9 @@ const approveAppointment = async (req, res) => {
   }
 };
 
-
+// ✅ Reject appointment
 const rejectAppointment = async (req, res) => {
   try {
-
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
       { status: "rejected" },
@@ -139,10 +164,9 @@ const rejectAppointment = async (req, res) => {
   }
 };
 
-
+// ✅ Complete appointment
 const completeAppointment = async (req, res) => {
   try {
-
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
       { status: "completed" },

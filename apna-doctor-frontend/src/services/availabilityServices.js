@@ -6,6 +6,13 @@ export const saveAvailability = async (userData) => {
 };
 
 export const getAvailability = async () => {
-  const response = await API.get("/doctor/availability/get");
+  const response = await API.get("/doctor/availability/get-availability");
+  return response.data;
+};
+
+export const getDoctorAvailability = async (doctorId) => {
+  const response = await API.get(
+    `/doctor/availability/get-availability/${doctorId}`
+  );
   return response.data;
 };

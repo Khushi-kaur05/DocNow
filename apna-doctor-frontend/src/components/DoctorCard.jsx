@@ -1,31 +1,53 @@
 export default function DoctorCard({ doctor, onBook }) {
   return (
-    <div className="border p-4 rounded-xl shadow-sm hover:shadow-md transition-all">
+    <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-blue-200 group overflow-hidden h-full flex flex-col hover:border-indigo-400">
       
-      <h2 className="text-lg font-semibold">
-        {doctor.userId?.name}
-      </h2>
-      <h1 className="text-sm text-gray-600">
-        {doctor.degree}
-      </h1>
+      {/* Top Section - Doctor Info */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0 group-hover:shadow-lg group-hover:scale-110 transition-all">
+          {doctor.userId?.name?.charAt(0).toUpperCase()}
+        </div>
 
-      <p className="text-gray-600">
-        {doctor.specialization}
-      </p>
+        <div className="flex-1">
+          <h2 className="text-lg font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
+            Dr. {doctor.userId?.name}
+          </h2>
 
-      <p className="text-sm text-gray-500">
-        {doctor.hospital}
-      </p>
+          <p className="text-sm text-gray-600 font-medium">
+            {doctor.degree}
+          </p>
 
-      <p className="text-sm font-medium mt-1">
-        ₹ {doctor.consultationFee}
-      </p>
+          <p className="text-xs bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-bold mt-1">
+            {doctor.specialization}
+          </p>
+        </div>
+      </div>
 
-      <button onClick = {()=>onBook(doctor)}
-      className="mt-3 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+      {/* Hospital Info */}
+      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-3 mb-4 border border-blue-200">
+        <p className="text-sm text-gray-800 font-medium">
+          {doctor.hospital}
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-blue-200 to-indigo-200 my-4"></div>
+
+      {/* Fee Section */}
+      <div className="mb-5">
+        <p className="text-xs text-gray-500 font-semibold">Consultation Fee</p>
+        <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mt-1">
+          ₹{doctor.consultationFee}
+        </p>
+      </div>
+
+      {/* CTA Button */}
+      <button
+        onClick={() => onBook(doctor)}
+        className="mt-auto w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 text-white font-bold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+      >
         Book Appointment
       </button>
-      
     </div>
   );
 }

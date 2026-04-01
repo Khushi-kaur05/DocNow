@@ -33,19 +33,47 @@ const getAvailability = async (req, res) => {
 
     const availability = await DoctorAvailability.findOne({ doctorId });
 
+    if (!availability) {
+      return res.status(200).json(null); // no data case
+    }
+
+    // ✅ CLEAN RESPONSE
     res.status(200).json({
-      success: true,
-      data: availability,
+      days: availability.days || [],
+      startTime: availability.startTime || "",
+      endTime: availability.endTime || "",
+      mode: availability.mode || [],
+      isEmergencyAvailable: availability.isEmergencyAvailable || false,
     });
 
   } catch (error) {
     res.status(500).json({
-      success: false,
       message: error.message,
     });
   }
 };
 
+const getDoctorAvailabilityById = async (req , res) => {
+  try {
+    const doctorId = req.params.doctorId;
+    const availability = await DoctorAvailability.findOne({doctorId});
+
+    if (!availability){
+      return res.json(null);
+    }
+     res.json({
+      days: availability.days || [],
+      startTime: availability.startTime || "",
+      endTime: availability.endTime || "",
+      mode: availability.mode || [],
+      isEmergencyAvailable: availability.isEmergencyAvailable || false,
+    });
+
+    
+  } catch(err){
+    res.status(500).json({message:error.message})
+  }
+};
 
 // ✅ export at end
-module.exports = { saveAvailability, getAvailability };
+module.exports = { saveAvailability, getAvailability, getDoctorAvailabilityById };
