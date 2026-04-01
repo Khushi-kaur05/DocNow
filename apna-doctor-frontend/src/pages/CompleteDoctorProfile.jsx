@@ -37,63 +37,88 @@ export default function CompleteDoctorProfile() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
-        <h2 className="text-xl font-bold mb-4">
-          Complete Your Doctor Profile
-        </h2>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-6">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Complete Your Profile</h1>
+            <p className="text-gray-600 mt-2">Add your professional information to get started</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Form Card */}
+          <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
 
-          <input
-            name="specialization"
-            placeholder="Specialization"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Specialization</label>
+                <input
+                  name="specialization"
+                  placeholder="e.g., Cardiology"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                  required
+                />
+              </div>
 
-          <input
-            name="degree"
-            placeholder="Degree"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Degree</label>
+                <input
+                  name="degree"
+                  placeholder="e.g., MD, MBBS"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                />
+              </div>
 
-          <input
-            name="experience"
-            placeholder="Experience (years)"
-            type="number"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Experience (Years)</label>
+                <input
+                  name="experience"
+                  placeholder="e.g., 5"
+                  type="number"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                />
+              </div>
 
-          <input
-            name="hospital"
-            placeholder="Hospital Name"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Hospital Name</label>
+                <input
+                  name="hospital"
+                  placeholder="e.g., Apollo Hospital"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                />
+              </div>
 
-          <input
-            name="consultationFee"
-            placeholder="Consultation Fee"
-            type="number"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Consultation Fee (₹)</label>
+                <input
+                  name="consultationFee"
+                  placeholder="e.g., 500"
+                  type="number"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                />
+              </div>
 
-          <input
-            name="availableDays"
-            placeholder="Available Days (e.g. Mon,Tue,Fri)"
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Available Days</label>
+                <input
+                  name="availableDays"
+                  placeholder="e.g., Mon,Tue,Fri"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900"
+                />
+              </div>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded w-full">
-            Save Profile
-          </button>
+              <button className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 active:scale-95">
+                Save Profile
+              </button>
 
-        </form>
+            </form>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );
