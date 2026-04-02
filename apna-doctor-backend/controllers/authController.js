@@ -76,7 +76,7 @@ exports.register = async (req, res) => {
     }
  
     
-    const { name, email, password, role, phone } = req.body;
+    const { name, email, password, role, phone, gender } = req.body;
     console.log("Body inside authController/register=====", req.body);
 
     // Check if user already exists
@@ -97,7 +97,8 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      phone
+      phone,
+      gender: gender || "male"
     });
     
     const { password: _, ...safeUser } = user.toObject();
@@ -144,7 +145,8 @@ exports.login = async (req, res) => {
           id: user._id,
           email: user.email,
           role: user.role,
-          name: user.name 
+          name: user.name,
+          gender: user.gender
         }
       });
   } catch (err) {

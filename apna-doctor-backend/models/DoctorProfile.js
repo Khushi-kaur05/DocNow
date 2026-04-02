@@ -29,6 +29,14 @@ const doctorProfileSchema = new mongoose.Schema({
     type: Number
   },
 
+  address: {
+    type: String
+  },
+
+  bio: {
+    type: String
+  },
+
   availableDays: [String],
 
   availableTimeSlots: [

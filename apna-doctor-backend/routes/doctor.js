@@ -6,7 +6,8 @@ const {
   getAllDoctors,
   getDoctorById,
   setDoctorAvailability,
-  getMyDoctorProfile
+  getMyDoctorProfile,
+  updateDoctorProfile
 } = require("../controllers/doctorController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -24,7 +25,15 @@ router.get("/my-profile",
   authMiddleware,
   roleMiddleware(["doctor"]),
   getMyDoctorProfile 
-)
+);
+
+// Update doctor profile
+router.patch("/my-profile", 
+  authMiddleware, 
+  roleMiddleware(["doctor"]), 
+  updateDoctorProfile
+);
+
 // Get doctor by id
 router.get("/:id", getDoctorById);
 
