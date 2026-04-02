@@ -5,45 +5,48 @@ const {
   bookAppointment,
   getDoctorAppointments,
   getPatientAppointments,
-  approveAppointment,
-  rejectAppointment,
-  completeAppointment
+  getMyDoctorAppointments,
+  completeAppointment,
+  deleteAppointment,
+  markAppointmentAsViewed
 } = require("../controllers/appointmentController");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require ("../middleware/roleMiddleware");
 
 
-// Book appointment
+// Book appointment (auto-confirmed)
 router.post("/book", authMiddleware, bookAppointment);
 
-
-// Get doctor appointments
+// Get doctor appointments (by doctorId)
 router.get("/doctor/:doctorId", authMiddleware, getDoctorAppointments);
 
+// Get logged-in doctor's appointments
+router.get("/my-appointments", authMiddleware, roleMiddleware(["doctor"]), getMyDoctorAppointments);
 
-// Get patient appointments
+// Get patient appointments (for logged-in user)
 router.get("/patient", authMiddleware, getPatientAppointments);
 
+// Mark appointment as viewed (remove red dot)
 router.patch(
-  "/approve/:id",
+  "/view/:id",
   authMiddleware,
-  roleMiddleware(["doctor"]),
-  approveAppointment
+  markAppointmentAsViewed
 );
 
-router.patch(
-  "/reject/:id",
-  authMiddleware,
-  roleMiddleware(["doctor"]),
-  rejectAppointment
-);
-
+// Complete appointment
 router.patch(
   "/complete/:id",
   authMiddleware,
   roleMiddleware(["doctor"]),
   completeAppointment
+);
+
+// Cancel/Delete appointment
+router.delete(
+  "/cancel/:id",
+  authMiddleware,
+  deleteAppointment
 );
 
 

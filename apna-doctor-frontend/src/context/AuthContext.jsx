@@ -16,14 +16,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = (data) => {
     const userData = {
+      id: data.user.id,
       token: data.accessToken || data.token,
       role: data.user.role,
-      username: data.user.name
+      username: data.user.name,
+      name: data.user.name,
+      email: data.user.email,
+      phone: data.user.phone,
+      gender: data.user.gender || "male"
     };
     setUser(userData);
     console.log("Setting user data in Auth Context=====", userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    console.log("usr data in local storage stored successfully=========")
+    console.log("usr data in local storage stored successfully==========")
   };
 
   const logout = () => {
@@ -31,8 +36,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  const updateUser = (updatedData) => {
+    const newUserData = { ...user, ...updatedData };
+    setUser(newUserData);
+    localStorage.setItem("user", JSON.stringify(newUserData));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

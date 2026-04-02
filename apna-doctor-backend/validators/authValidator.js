@@ -20,7 +20,11 @@ const registerSchema = Joi.object({
 
   phone: Joi.string()
     .pattern(/^\d{10,15}$/)
-    .required()
+    .required(),
+
+  gender: Joi.string()
+    .valid("male", "female", "other")
+    .optional()
 
 }).unknown(true);
 

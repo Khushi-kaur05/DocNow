@@ -12,6 +12,12 @@ export const getMyDoctorProfile = async () => {
   return res.data;
 };
 
+// update logged-in doctor profile
+export const updateDoctorProfile = async (data) => {
+  const res = await API.patch("/doctors/my-profile", data);
+  return res.data;
+};
+
 // get all doctors (for find doctor)
 export const getAllDoctors = async (params) => {
   const res = await API.get("/doctors", { params });

@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import CompleteDoctorProfile from "./pages/CompleteDoctorProfile";
 import FindDoctor from "./pages/FindDoctor";
 import ManageAvailability from "./pages/ManageAvailability";
+import MyAppointments from "./pages/MyAppointments";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
   return (
@@ -47,6 +49,22 @@ function App() {
         }
         />
         <Route path="/manage-availability" element={<ManageAvailability/>}/>
+        
+        {/* Shared routes */}
+        <Route path="/my-appointments" element={
+          <ProtectedRoute allowedRoles={["patient", "doctor"]}>
+            <MyAppointments/>
+          </ProtectedRoute>
+        }
+        />
+
+        {/* Doctor Profile */}
+        <Route path="/my-profile" element={
+          <ProtectedRoute allowedRoles={["doctor"]}>
+            <MyProfile/>
+          </ProtectedRoute>
+        }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -10,13 +10,32 @@ const appointmentSchema = new mongoose.Schema({
 
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "DoctorProfile",
+    ref: "User",
     required: true
   },
   
-   doctorProfileId: {
+  doctorProfileId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "DoctorProfile",
+    required: true
+  },
+
+  patientName: {
+    type: String,
+    required: true
+  },
+
+  patientAge: {
+    type: Number
+  },
+
+  patientPhone: {
+    type: String
+  },
+
+  mode: {
+    type: String,
+    enum: ["online", "offline"],
     required: true
   },
 
@@ -32,8 +51,13 @@ const appointmentSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected", "completed"],
-    default: "pending"
+    enum: ["approved", "completed", "cancelled"],
+    default: "approved"
+  },
+
+  isNew: {
+    type: Boolean,
+    default: true
   }
 
 }, { timestamps: true });

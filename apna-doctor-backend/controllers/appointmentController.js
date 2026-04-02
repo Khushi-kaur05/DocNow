@@ -31,7 +31,7 @@ const bookAppointment = async (req, res) => {
   }
 
   try {
-    const { doctorId, date, time } = req.body;
+    const { doctorId, date, time, patientName, patientAge, patientPhone, mode } = req.body;
 
     // ✅ Check if doctor exists
     const doctor = await DoctorProfile.findOne({ userId: doctorId });
@@ -64,11 +64,12 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    // ✅ Check if slot already booked
+    // ✅ Check if slot already booked (excluding cancelled appointments)
     const existingAppointment = await Appointment.findOne({
       doctorId,
       date,
-      time
+      time,
+      status: { $ne: "cancelled" }
     });
 
     if (existingAppointment) {
@@ -82,6 +83,10 @@ const bookAppointment = async (req, res) => {
       patientId: req.user.id,
       doctorId,
       doctorProfileId: doctor._id,
+      patientName,
+      patientAge,
+      patientPhone,
+      mode,
       date,
       time
     });
@@ -103,7 +108,8 @@ const getDoctorAppointments = async (req, res) => {
   try {
     const appointments = await Appointment
       .find({ doctorId: req.params.doctorId })
-      .populate("patientId");
+      .populate("patientId")
+      .populate("doctorProfileId");
 
     res.json(appointments);
 
@@ -117,7 +123,14 @@ const getPatientAppointments = async (req, res) => {
   try {
     const appointments = await Appointment
       .find({ patientId: req.user.id })
-      .populate("doctorId");
+      .populate({
+        path: "doctorId",
+        select: "name email phone"
+      })
+      .populate({
+        path: "doctorProfileId",
+        select: "specialization degree experience hospital consultationFee"
+      });
 
     res.json(appointments);
 
@@ -126,36 +139,33 @@ const getPatientAppointments = async (req, res) => {
   }
 };
 
-// ✅ Approve appointment
-const approveAppointment = async (req, res) => {
+// ✅ Get logged-in doctor appointments (sorted by new first)
+const getMyDoctorAppointments = async (req, res) => {
   try {
-    const appointment = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      { status: "approved" },
-      { new: true }
-    );
+    const appointments = await Appointment
+      .find({ doctorId: req.user.id, status: { $ne: "cancelled" } })
+      .populate("patientId")
+      .populate("doctorProfileId")
+      .sort({ isNew: -1, createdAt: -1 });
 
-    res.json({
-      message: "Appointment approved",
-      appointment
-    });
+    res.json(appointments);
 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// ✅ Reject appointment
-const rejectAppointment = async (req, res) => {
+// ✅ Mark appointment as viewed (remove red dot)
+const markAppointmentAsViewed = async (req, res) => {
   try {
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
-      { status: "rejected" },
+      { isNew: false },
       { new: true }
     );
 
     res.json({
-      message: "Appointment rejected",
+      message: "Appointment marked as viewed",
       appointment
     });
 
@@ -183,11 +193,47 @@ const completeAppointment = async (req, res) => {
   }
 };
 
+// ✅ Cancel/Delete appointment
+const deleteAppointment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({
+        message: "Appointment not found"
+      });
+    }
+
+    // Check if user is authorized to delete (must be patient or doctor of this appointment)
+    if (appointment.patientId.toString() !== req.user.id && appointment.doctorId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Not authorized to delete this appointment"
+      });
+    }
+
+    // Update status to cancelled instead of deleting
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status: "cancelled" },
+      { new: true }
+    );
+
+    res.json({
+      message: "Appointment cancelled successfully",
+      appointment: updatedAppointment
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   bookAppointment,
   getDoctorAppointments,
   getPatientAppointments,
-  approveAppointment,
-  rejectAppointment,
-  completeAppointment
+  getMyDoctorAppointments,
+  completeAppointment,
+  deleteAppointment,
+  markAppointmentAsViewed
 };

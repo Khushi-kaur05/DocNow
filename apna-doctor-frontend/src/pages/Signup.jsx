@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "../services/authService";
+import { registerUser, loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 import stethoscopeIcon from "../assets/stethoscope-medical-tool.png";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     role: "",
-    phone: ""
+    phone: "",
+    gender: "male"
   });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,8 +29,12 @@ const Signup = () => {
     setMessage("");
 
     try {
-      const data = await registerUser(formData);
-      if (data.safeUser) {
+      const registerData = await registerUser(formData);
+      if (registerData.safeUser) {
+        // Auto-login the user after successful registration
+        const loginData = await loginUser({ email: formData.email, password: formData.password });
+        login(loginData);
+        
         if (formData.role === "doctor") {
           navigate("/doctor-dashboard");
         } else {
@@ -126,6 +133,21 @@ const Signup = () => {
                   required
                   className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900 text-sm"
                 />
+              </div>
+
+              {/* Gender Selection */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition text-gray-900 text-sm"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
               </div>
 
               {/* Submit Button */}

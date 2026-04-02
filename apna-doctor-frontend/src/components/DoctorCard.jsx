@@ -1,12 +1,20 @@
+import doctorProfileMale from "../assets/doctor-profile-male.png";
+import doctorProfileFemale from "../assets/doctor-profile-female.png";
+
 export default function DoctorCard({ doctor, onBook }) {
+  const gender = doctor.userId?.gender || "male";
+  const profileImage = gender === "female" ? doctorProfileFemale : doctorProfileMale;
+
   return (
     <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-blue-200 group overflow-hidden h-full flex flex-col hover:border-indigo-400">
       
       {/* Top Section - Doctor Info */}
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0 group-hover:shadow-lg group-hover:scale-110 transition-all">
-          {doctor.userId?.name?.charAt(0).toUpperCase()}
-        </div>
+        <img
+          src={profileImage}
+          alt={doctor.userId?.name}
+          className="w-16 h-16 rounded-full object-cover shadow-md flex-shrink-0 group-hover:shadow-lg group-hover:scale-110 transition-all"
+        />
 
         <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
