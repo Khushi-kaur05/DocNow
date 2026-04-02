@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://docnow-6ici.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
