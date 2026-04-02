@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((err) => console.log(err));
 
 app.use(cors({
-  origin: "https://docnow-alpha.vercel.app/", // your frontend URL
+  origin: "https://docnow-lemon.vercel.app/", // your frontend URL
   credentials: true // if you are sending cookies or tokens
 }));
 app.use(express.json()); // Global middleware used for all the routes to parse json response
