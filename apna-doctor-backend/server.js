@@ -10,13 +10,14 @@ const doctorRoute = require("./routes/doctor");
 const appointmentRoute = require("./routes/appointment");
 const doctorAvailabilityRoutes = require( "./routes/doctorAvailability.js");
 const errorHandler = require ("./middleware/errorHandlerMiddleware");
+const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected"))
 .catch((err) => console.log(err));
 
 app.use(cors({
-  origin: "http://localhost:5173", // your frontend URL
+  origin: "https://docnow-alpha.vercel.app/", // your frontend URL
   credentials: true // if you are sending cookies or tokens
 }));
 app.use(express.json()); // Global middleware used for all the routes to parse json response
@@ -38,6 +39,6 @@ app.get("/", (req,res) => {
     res.send({name : "user"})
 });
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
     console.log("Server running on the port 5000");
 });
